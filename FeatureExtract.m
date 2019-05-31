@@ -29,7 +29,7 @@ end
 numTrials = 2; % To be updated!! *****
 numWindows = 8;
 for t = 1:numTrials
-    trial = sprintf('/Users/seraphinegoh/Documents/MATLAB/EE209AS/%s/%d', dataFolder, t);
+    trial_dir = sprintf('/Users/seraphinegoh/Documents/MATLAB/EE209AS/%s/%d', dataFolder, t);
     
     % Define label value (trial-dependent)
     %label = 0; % For now, all trials are for label 0 (no human) *****
@@ -47,7 +47,7 @@ for t = 1:numTrials
         
         % Create path to audio file for output(i-1).wav
         outputNum = sprintf('output%d.wav', i-1);
-        audioFile = fullfile(trial, outputNum);
+        audioFile = fullfile(trial_dir, outputNum);
 
         % Read audio file --> output is data, sampling rate
         [data,rate] = audioread(audioFile);
@@ -70,24 +70,11 @@ for t = 1:numTrials
             currData = data(iStart:iEnd);
             
             % Exract features and write to text file
-            feature = mean(currData);
-            fprintf(fileIDFormat, '%f,', feature);
-            fprintf(fileID, '%f,', feature);
-            feature = median(currData);
-            fprintf(fileIDFormat, '%f,', feature);
-            fprintf(fileID, '%f,', feature);
-            feature = std(currData);
-            fprintf(fileIDFormat, '%f,', feature);
-            fprintf(fileID, '%f,', feature);
-            feature = max(currData);
-            fprintf(fileIDFormat, '%f,', feature);
-            fprintf(fileID, '%f,', feature);
-            feature = skewness(currData);
-            fprintf(fileIDFormat, '%f,', feature);
-            fprintf(fileID, '%f,', feature);
-            feature = kurtosis(currData);
-            fprintf(fileIDFormat, '%f,', feature);
-            fprintf(fileID, '%f,', feature);
+            features = [mean(currData), median(currData),std(currData), max(currData), skewness(currData), kurtosis(currData)];
+            for feature = features
+                fprintf(fileIDFormat, '%f,', feature);
+                fprintf(fileID, '%f,', feature);
+            end
             
             % Computation for MFCC feature --> extract and write to text file
             const = 5;
