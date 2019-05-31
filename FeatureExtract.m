@@ -3,17 +3,22 @@
 % void FeatureExtract(str dataFolder, int label)
 function FeatureExtract(dataFolder, label)
 
+% Define variables
+mainDir = pwd;
+numFile = 8; % To be updated!! (8) *****
+numTrials = 15; % To be updated!! (100) *****
+numWindows = 8;
+
 % If Trials directory does not exist, return error message and quit
-TrialFolder = sprintf('/Users/seraphinegoh/Documents/MATLAB/EE209AS/%s', dataFolder);
+TrialFolder = fullfile(mainDir,sprintf('/%s', dataFolder));
 if ~isfolder(TrialFolder)
     fprintf('Error: The %s directory does not exist.\n', dataFolder);
     return;
 end
 
 % Create file for recording extracted features (named according to output mic #)
-numFile = 1; % To be updated!! *****
 for num = 1:numFile      
-    fileNameFormat = sprintf('/Users/seraphinegoh/Documents/MATLAB/EE209AS/features%d_format.txt', num-1);
+    fileNameFormat = fullfile(mainDir,sprintf('/features%d_format.txt', num-1));
     
     % Create new file if does not exist
     if ~isfile(fileNameFormat)
@@ -26,36 +31,35 @@ for num = 1:numFile
 end
 
 % For each trial, load the .wav files for feature extraction
-numTrials = 2; % To be updated!! *****
-numWindows = 8;
 for t = 1:numTrials
-    trial_dir = sprintf('/Users/seraphinegoh/Documents/MATLAB/EE209AS/%s/%d', dataFolder, t);
-    
-    % Define label value (trial-dependent)
-    %label = 0; % For now, all trials are for label 0 (no human) *****
+    trial_dir = fullfile(mainDir,sprintf('/%s/%d', dataFolder, t));
     
     % Loop through each audio file (8)
     for i = 1:numFile
         % Open file for recording extracted features (named according to output mic #)
-        fileNameFormat = sprintf('/Users/seraphinegoh/Documents/MATLAB/EE209AS/features%d_format.txt', i-1);
+        fileNameFormat = fullfile(mainDir,sprintf('/features%d_format.txt', i-1));
         fileIDFormat = fopen(fileNameFormat, 'a');
         fprintf(fileIDFormat, 'Trial #%d\n', t);
         % Unformatted version
-        fileName = sprintf('/Users/seraphinegoh/Documents/MATLAB/EE209AS/features%d.txt', i-1);
+        fileName = fullfile(mainDir,sprintf('/features%d.txt', i-1));
         fileID = fopen(fileName, 'a');
 
-        
         % Create path to audio file for output(i-1).wav
         outputNum = sprintf('output%d.wav', i-1);
         audioFile = fullfile(trial_dir, outputNum);
-
+        
+        % Check that audio file is valid (TotalSamples != 0 and > 65500)
+        info = audioinfo(audioFile);
+        if info.TotalSamples == 0 || info.TotalSamples < 65500
+            break; % Exit for loop --> go to next audio file number
+        end
+        
         % Read audio file --> output is data, sampling rate
         [data,rate] = audioread(audioFile);
         
         % Split data into windows (8)
         stepSize = ceil(length(data)/numWindows);
         index = 1;
-        %feature = 0;
         for win = 1:numWindows
             % Check that data index not exceeded --> assign to max index if exceeded
             if (index-1)+stepSize > length(data)
@@ -70,7 +74,7 @@ for t = 1:numTrials
             currData = data(iStart:iEnd);
             
             % Exract features and write to text file
-            features = [mean(currData), median(currData),std(currData), max(currData), skewness(currData), kurtosis(currData)];
+            features = [mean(currData),median(currData),std(currData),max(currData),skewness(currData),kurtosis(currData)];
             for feature = features
                 fprintf(fileIDFormat, '%f,', feature);
                 fprintf(fileID, '%f,', feature);

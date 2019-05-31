@@ -3,21 +3,22 @@ close all
 clc
 
 % Define variables
-numFile = 1; % To be updated!! *****
+numFile = 8; % To be updated!! (8) *****
+mainDir = pwd;
 
 % Clean up Old instances of ExtractedFeatures --> make ExtractedFeaturesOld folder if does not exist
-oldFeatures = ('/Users/seraphinegoh/Documents/MATLAB/EE209AS/ExtractedFeaturesOld');
+oldFeatures = fullfile(mainDir,'/ExtractedFeaturesOld');
 if ~isfolder(oldFeatures)
     mkdir ExtractedFeaturesOld
 end
 
 % Check if ExtractedFeatures directory already exists --> if so, rename and move to Old folder
-eFeatures = ('/Users/seraphinegoh/Documents/MATLAB/EE209AS/ExtractedFeatures');
+eFeatures = fullfile(mainDir,'/ExtractedFeatures');
 notCopied = true;
 numCount = 1;
 if isfolder(eFeatures)
     while notCopied
-        efNum = sprintf('/Users/seraphinegoh/Documents/MATLAB/EE209AS/ExtractedFeaturesOld/%d', numCount);
+        efNum = fullfile(mainDir,sprintf('/ExtractedFeaturesOld/%d', numCount));
         if ~isfolder(efNum)
             % Rename/move to next available folder number
             movefile(eFeatures, efNum)
@@ -28,25 +29,31 @@ if isfolder(eFeatures)
 end
 
 % Run feature extraction for label = 0 data
-FeatureExtract(sprintf('Trials0'), 0);
+%FeatureExtract(sprintf('Trials0'), 0);
+FeatureExtract(sprintf('Trials0_1'), 0);
+%FeatureExtract(sprintf('Trials0_2'), 0);
 
 % Run feature extraction for label = 1 data
-FeatureExtract(sprintf('Trials1'), 1);
+%FeatureExtract(sprintf('Trials1'), 1);
+FeatureExtract(sprintf('Trials1_Couch'), 1);
+%FeatureExtract(sprintf('Trials1_Sitting'), 1);
 
 % Move extracted feature files to new directory
-cd /Users/seraphinegoh/Documents/MATLAB/EE209AS
-mkdir /Users/seraphinegoh/Documents/MATLAB/EE209AS/ExtractedFeatures
-cd /Users/seraphinegoh/Documents/MATLAB/EE209AS/
+pwd
+
+cd(mainDir)
+mkdir(fullfile(mainDir,'/ExtractedFeatures'))
+cd(mainDir)
 for num = 1:numFile      
     fileNameFormat = sprintf('features%d_format.txt', num-1);
-    movefile(fileNameFormat,"/Users/seraphinegoh/Documents/MATLAB/EE209AS/ExtractedFeatures")
+    movefile(fileNameFormat,fullfile(mainDir,'/ExtractedFeatures'))
     % Unformatted version
     fileName = sprintf('features%d.txt', num-1);
-    movefile(fileName,"/Users/seraphinegoh/Documents/MATLAB/EE209AS/ExtractedFeatures")
+    movefile(fileName,fullfile(mainDir,'/ExtractedFeatures'))
 end
 
 % For each feature file (8), perform machine learning algorithm
-cd /Users/seraphinegoh/Documents/MATLAB/EE209AS/ExtractedFeatures
+cd(fullfile(mainDir,'/ExtractedFeatures'))
 for num = 1:numFile      
     % Load data from feature files
     featureFile = sprintf('features%d.txt', num-1);
@@ -66,17 +73,17 @@ for num = 1:numFile
     svmCvMdl = crossval(svmMdl);
     svmError = kfoldLoss(svmCvMdl);
     accuracy(1,1) = 1 - svmError;
-    disp(accuracy);
+    %disp(accuracy);
     
     % KNN
     knnMdl = fitcknn(features, labels);
     knnCvMdl = crossval(knnMdl);
     knnError = kfoldLoss(knnCvMdl);
     accuracy(1,2) = 1 - knnError;
-    disp(accuracy);
+    %disp(accuracy);
     
     % Print the accuracy to text file
-    accuracyFile = sprintf('/Users/seraphinegoh/Documents/MATLAB/EE209AS/ML_Accuracy.txt');
+    accuracyFile = fullfile(mainDir,'/ML_Accuracy.txt');
     % Create new file if does not exist
     if ~isfile(accuracyFile)
         afileID = fopen(accuracyFile, 'w');
@@ -84,17 +91,17 @@ for num = 1:numFile
         fprintf(afileID, 'Report of Cross-Validation Accuracy for ML Classifiers\n\n');
         % Print accuracies
         for c = 1:size(classifier,2)
-            fprintf(afileID, '%s CV Accuracy = %f\n', classifier(1,c), accuracy(1,c));
+            fprintf(afileID, '%s CV Accuracy (%d) = %f\n', classifier(1,c), num-1, accuracy(1,c));
         end
         fclose(afileID);
     else
         afileID = fopen(accuracyFile, 'a');
         % Print accuracies
         for c = 1:size(classifier,2)
-            fprintf(afileID, '%s CV Accuracy = %f\n', classifier(1,c), accuracy(1,c));
+            fprintf(afileID, '%s CV Accuracy (%d) = %f\n', classifier(1,c), num-1, accuracy(1,c));
         end
         fclose(afileID);
     end
 end
 
-cd /Users/seraphinegoh/Documents/MATLAB/EE209AS/
+cd(mainDir)
