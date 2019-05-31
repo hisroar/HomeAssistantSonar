@@ -1,59 +1,57 @@
-clear all
-close all
-clc
+clear all;
+close all;
+fclose all;
+%clc
 
 % Define variables
-numFile = 8; % To be updated!! (8) *****
+numFile = 9; % To be updated!! (9) *****
 mainDir = pwd;
+featuresDir = '/ExtractedFeatures';
+featuresDirOld = [featuresDir 'Old'];
 
 % Clean up Old instances of ExtractedFeatures --> make ExtractedFeaturesOld folder if does not exist
-oldFeatures = fullfile(mainDir,'/ExtractedFeaturesOld');
+oldFeatures = fullfile(mainDir,featuresDirOld);
 if ~isfolder(oldFeatures)
-    mkdir ExtractedFeaturesOld
+    mkdir(oldFeatures);
 end
 
 % Check if ExtractedFeatures directory already exists --> if so, rename and move to Old folder
-eFeatures = fullfile(mainDir,'/ExtractedFeatures');
+eFeatures = fullfile(mainDir,featuresDir);
 notCopied = true;
 numCount = 1;
 if isfolder(eFeatures)
     while notCopied
-        efNum = fullfile(mainDir,sprintf('/ExtractedFeaturesOld/%d', numCount));
+        efNum = fullfile(mainDir,featuresDirOld,num2str(numCount));
         if ~isfolder(efNum)
             % Rename/move to next available folder number
             movefile(eFeatures, efNum)
+            mkdir(eFeatures);
             notCopied = false;
         end
         numCount = numCount + 1;
     end
+else
+    mkdir(eFeatures);
 end
 
 % Run feature extraction for label = 0 data
-%FeatureExtract(sprintf('Trials0'), 0);
-FeatureExtract(sprintf('Trials0_1'), 0);
-%FeatureExtract(sprintf('Trials0_2'), 0);
+FeatureExtract(sprintf('trials_nobody_1'), featuresDir, 0);
+FeatureExtract(sprintf('trials_nobody_2'), featuresDir, 0);
 
 % Run feature extraction for label = 1 data
-%FeatureExtract(sprintf('Trials1'), 1);
-FeatureExtract(sprintf('Trials1_Couch'), 1);
-%FeatureExtract(sprintf('Trials1_Sitting'), 1);
-
-% Move extracted feature files to new directory
-pwd
-
-cd(mainDir)
-mkdir(fullfile(mainDir,'/ExtractedFeatures'))
-cd(mainDir)
-for num = 1:numFile      
-    fileNameFormat = sprintf('features%d_format.txt', num-1);
-    movefile(fileNameFormat,fullfile(mainDir,'/ExtractedFeatures'))
-    % Unformatted version
-    fileName = sprintf('features%d.txt', num-1);
-    movefile(fileName,fullfile(mainDir,'/ExtractedFeatures'))
-end
+FeatureExtract(sprintf('trials_dennis_couch'), featuresDir, 1);
+FeatureExtract(sprintf('trials_dennis_couch_sitting'), featuresDir, 1);
 
 % For each feature file (8), perform machine learning algorithm
-cd(fullfile(mainDir,'/ExtractedFeatures'))
+accuracyFile = fullfile(mainDir,'/ML_Accuracy.txt');
+afileID = fopen(accuracyFile, 'w');
+fprintf(afileID, 'Report of Cross-Validation Accuracy for ML Classifiers\n\n');
+
+cd(fullfile(mainDir,featuresDir))
+
+features_all = [];
+labels_all = [];
+
 for num = 1:numFile      
     % Load data from feature files
     featureFile = sprintf('features%d.txt', num-1);
@@ -62,6 +60,10 @@ for num = 1:numFile
     % Form feature and label matrices
     features = featureData(:,1:size(featureData,2)-1);
     labels = featureData(:,size(featureData,2));
+    
+    % Generate a matrix with all features and all labels (labels should all
+    % be the same)
+    features_all = [features_all, features];
     
     % Define classifier and accuracy matrix --> ML models to be used
     classifier = ["SVM", "KNN"];
@@ -83,25 +85,11 @@ for num = 1:numFile
     %disp(accuracy);
     
     % Print the accuracy to text file
-    accuracyFile = fullfile(mainDir,'/ML_Accuracy.txt');
-    % Create new file if does not exist
-    if ~isfile(accuracyFile)
-        afileID = fopen(accuracyFile, 'w');
-        % Print title row at top of file
-        fprintf(afileID, 'Report of Cross-Validation Accuracy for ML Classifiers\n\n');
-        % Print accuracies
-        for c = 1:size(classifier,2)
-            fprintf(afileID, '%s CV Accuracy (%d) = %f\n', classifier(1,c), num-1, accuracy(1,c));
-        end
-        fclose(afileID);
-    else
-        afileID = fopen(accuracyFile, 'a');
-        % Print accuracies
-        for c = 1:size(classifier,2)
-            fprintf(afileID, '%s CV Accuracy (%d) = %f\n', classifier(1,c), num-1, accuracy(1,c));
-        end
-        fclose(afileID);
+    for c = 1:size(classifier,2)
+        fprintf(afileID, '%s CV Accuracy (%d) = %f\n', classifier(1,c), num-1, accuracy(1,c));
     end
+
 end
+fclose(afileID);
 
 cd(mainDir)

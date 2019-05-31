@@ -1,13 +1,13 @@
 % Make function that extracts features for given data
 
 % void FeatureExtract(str dataFolder, int label)
-function FeatureExtract(dataFolder, label)
+function FeatureExtract(dataFolder, featuresDir, label)
 
 % Define variables
 mainDir = pwd;
-numFile = 8; % To be updated!! (8) *****
-numTrials = 15; % To be updated!! (100) *****
-numWindows = 8;
+numFile = 9; % To be updated!! (9) *****
+numTrials = 100; % To be updated!! (100) *****
+numWindows = 8; % should be 8 *****
 
 % If Trials directory does not exist, return error message and quit
 TrialFolder = fullfile(mainDir,sprintf('/%s', dataFolder));
@@ -17,31 +17,35 @@ if ~isfolder(TrialFolder)
 end
 
 % Create file for recording extracted features (named according to output mic #)
-for num = 1:numFile      
-    fileNameFormat = fullfile(mainDir,sprintf('/features%d_format.txt', num-1));
+for num = 1:numFile
+    %fileName = fullfile(mainDir,featuresDir,sprintf('/features%d.txt', num-1));
+    %fileID = fopen(fileName, 'w');
+    
+    fileNameFormat = fullfile(mainDir,featuresDir,sprintf('/features%d_format.txt', num-1));
     
     % Create new file if does not exist
     if ~isfile(fileNameFormat)
         fileIDFormat = fopen(fileNameFormat, 'w');
-        
+
         % Print title row at top of file
         fprintf(fileIDFormat, 'Mean, Median, Std, Max, Skewness, Kurtosis, MFCC, LABEL\n\n');
         fclose(fileIDFormat);
+        %fclose(fileID);
     end
 end
 
 % For each trial, load the .wav files for feature extraction
 for t = 1:numTrials
-    trial_dir = fullfile(mainDir,sprintf('/%s/%d', dataFolder, t));
+    trial_dir = fullfile(mainDir,dataFolder,num2str(t));
     
     % Loop through each audio file (8)
     for i = 1:numFile
         % Open file for recording extracted features (named according to output mic #)
-        fileNameFormat = fullfile(mainDir,sprintf('/features%d_format.txt', i-1));
+        fileNameFormat = fullfile(mainDir,featuresDir,sprintf('/features%d_format.txt', i-1));
         fileIDFormat = fopen(fileNameFormat, 'a');
         fprintf(fileIDFormat, 'Trial #%d\n', t);
         % Unformatted version
-        fileName = fullfile(mainDir,sprintf('/features%d.txt', i-1));
+        fileName = fullfile(mainDir,featuresDir,sprintf('/features%d.txt', i-1));
         fileID = fopen(fileName, 'a');
 
         % Create path to audio file for output(i-1).wav
