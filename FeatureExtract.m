@@ -16,7 +16,7 @@ if ~isfolder(TrialFolder)
     return;
 end
 
-% Create file for recording extracted features (named according to output mic #)
+% Create formatted txt file for recording extracted features (named according to output mic #)
 for num = 1:numFile
     fileNameFormat = fullfile(mainDir,featuresDir,sprintf('/features%d_format.txt', num-1));
     
@@ -36,12 +36,12 @@ for t = 1:numTrials
     
     % Loop through each audio file (9)
     for i = 1:numFile
-        % Open file for recording extracted features (named according to output mic #)
+        % Open formatted txt file for recording extracted features (named according to output mic #)
         fileNameFormat = fullfile(mainDir,featuresDir,sprintf('/features%d_format.txt', i-1));
         fileIDFormat = fopen(fileNameFormat, 'a');
         fprintf(fileIDFormat, 'Trial #%d\n', t);
-        % Unformatted version
-        fileName = fullfile(mainDir,featuresDir,sprintf('/features%d.txt', i-1));
+        % Unformatted version (.csv)
+        fileName = fullfile(mainDir,featuresDir,sprintf('/features%d.csv', i-1));
         fileID = fopen(fileName, 'a');
 
         % Create path to audio file for output(i-1).wav

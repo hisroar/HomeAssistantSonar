@@ -20,8 +20,8 @@ features_all = [];
 labels_all = [];
 
 for num = 1:numFile      
-    % Load data from feature files
-    featureFile = sprintf('features%d.txt', num-1);
+    % Load data from feature files (.csv)
+    featureFile = sprintf('features%d.csv', num-1);
     featureData = load(featureFile);
     
     % Form feature and label matrices
