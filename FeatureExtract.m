@@ -1,4 +1,4 @@
-% Make function that extracts features for given data
+% Function that extracts features for given data
 
 % void FeatureExtract(str dataFolder, int label)
 function FeatureExtract(dataFolder, featuresDir, label)
@@ -18,9 +18,6 @@ end
 
 % Create file for recording extracted features (named according to output mic #)
 for num = 1:numFile
-    %fileName = fullfile(mainDir,featuresDir,sprintf('/features%d.txt', num-1));
-    %fileID = fopen(fileName, 'w');
-    
     fileNameFormat = fullfile(mainDir,featuresDir,sprintf('/features%d_format.txt', num-1));
     
     % Create new file if does not exist
@@ -30,7 +27,6 @@ for num = 1:numFile
         % Print title row at top of file
         fprintf(fileIDFormat, 'Mean, Median, Std, Max, Skewness, Kurtosis, MFCC, LABEL\n\n');
         fclose(fileIDFormat);
-        %fclose(fileID);
     end
 end
 
@@ -38,7 +34,7 @@ end
 for t = 1:numTrials
     trial_dir = fullfile(mainDir,dataFolder,num2str(t));
     
-    % Loop through each audio file (8)
+    % Loop through each audio file (9)
     for i = 1:numFile
         % Open file for recording extracted features (named according to output mic #)
         fileNameFormat = fullfile(mainDir,featuresDir,sprintf('/features%d_format.txt', i-1));
@@ -55,17 +51,17 @@ for t = 1:numTrials
         % Check that audio file is valid (TotalSamples != 0 and > 65500)
         info = audioinfo(audioFile);
         if info.TotalSamples == 0 || info.TotalSamples < 65500
-            break; % Exit for loop --> go to next audio file number
+            break; % Exit for loop -> go to next audio file number
         end
         
-        % Read audio file --> output is data, sampling rate
+        % Read audio file -> output is data, sampling rate
         [data,rate] = audioread(audioFile);
         
         % Split data into windows (8)
         stepSize = ceil(length(data)/numWindows);
         index = 1;
         for win = 1:numWindows
-            % Check that data index not exceeded --> assign to max index if exceeded
+            % Check that data index not exceeded -> assign to max index if exceeded
             if (index-1)+stepSize > length(data)
                 iStart = index;
                 iEnd = length(data);
@@ -84,7 +80,7 @@ for t = 1:numTrials
                 fprintf(fileID, '%f,', feature);
             end
             
-            % Computation for MFCC feature --> extract and write to text file
+            % Computation for MFCC feature -> extract and write to text file
             const = 5;
             windowLength = ceil(size(currData,1)/const);
             overlapLength = rate*0.02; % default
@@ -110,10 +106,5 @@ for t = 1:numTrials
         fprintf(fileIDFormat, '\n');
         fclose(fileIDFormat);
         fclose(fileID);
-        
     end
-
 end
-
-
-
