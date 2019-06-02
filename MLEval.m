@@ -28,30 +28,29 @@ features = allFeatureData(:,1:size(allFeatureData,2)-1);
 labels = allFeatureData(:,size(allFeatureData,2));
 
 % Define classifier and accuracy matrix -> ML models to be used
-% classifier = ["Multi-Class SVM"];
-% accuracy = zeros(size(classifier));
-% 
-% % Train and cross validate machine learning models -> estimate error and accuracy
-% % Multi-Class SVM (ECOC)
-% mcSvmMdl = fitcsvm(features, labels);
-% mcSvmCvMdl = crossval(mcSvmMdl);
-% mcSvmError = kfoldLoss(mcSvmCvMdl);
-% accuracy(1,1) = 1 - mcSvmError;
+classifier = ["Multi-Class SVM"];
+accuracy = zeros(size(classifier));
+
+% Train and cross validate machine learning models -> estimate error and accuracy
+% Multi-Class SVM (ECOC)
+mcSvmMdl = fitcecoc(features, labels);
+mcSvmCvMdl = crossval(mcSvmMdl);
+mcSvmError = kfoldLoss(mcSvmCvMdl);
+accuracy(1,1) = 1 - mcSvmError;
 
 % Binary classifiers (2 classes)
-classifier = ["SVM", "KNN"];
-accuracy = zeros(size(classifier));
-% SVM
-svmMdl = fitcsvm(features, labels);
-svmCvMdl = crossval(svmMdl);
-svmError = kfoldLoss(svmCvMdl);
-accuracy(1,1) = 1 - svmError;
-
-% KNN
-knnMdl = fitcknn(features, labels);
-knnCvMdl = crossval(knnMdl);
-knnError = kfoldLoss(knnCvMdl);
-accuracy(1,2) = 1 - knnError;
+% classifier = ["SVM", "KNN"];
+% accuracy = zeros(size(classifier));
+% % SVM
+% svmMdl = fitcsvm(features, labels);
+% svmCvMdl = crossval(svmMdl);
+% svmError = kfoldLoss(svmCvMdl);
+% accuracy(1,1) = 1 - svmError; 
+% % KNN
+% knnMdl = fitcknn(features, labels);
+% knnCvMdl = crossval(knnMdl);
+% knnError = kfoldLoss(knnCvMdl);
+% accuracy(1,2) = 1 - knnError;
 
 % Print the accuracy to text file
 for c = 1:size(classifier,2)
