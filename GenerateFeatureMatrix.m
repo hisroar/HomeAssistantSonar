@@ -87,3 +87,7 @@ else
     changedData = true; % Reset changedData toggle
     cd(mainDir)
 end
+
+% Save workspace variables to mat file
+matFile = 'GenerateFeatureMatrix.mat';
+save(matFile);

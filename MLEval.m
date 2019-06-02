@@ -59,3 +59,7 @@ end
 
 fclose(afileID);
 cd(mainDir)
+
+% Save workspace variables to mat file
+matFile = 'MLEval.mat';
+save(matFile);
