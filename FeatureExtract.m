@@ -1,34 +1,29 @@
-% Function that extracts features for given data
+% Function that extracts features for given data and saves to corresponding features file
 
 % void FeatureExtract(str dataFolder, int label)
 function FeatureExtract(dataFolder, featuresDir, label)
 
 % Define variables
 mainDir = pwd;
-numFile = 9; % To be updated!! (9) *****
-numTrials = 100; % To be updated!! (100) *****
-numWindows = 8; % should be 8 *****
+numFile = 9; 
+numWindows = 8; 
 
 % If Trials directory does not exist, return error message and quit
-TrialFolder = fullfile(mainDir,sprintf('/%s', dataFolder));
+TrialFolder = fullfile(mainDir,dataFolder);
 if ~isfolder(TrialFolder)
     fprintf('Error: The %s directory does not exist.\n', dataFolder);
     return;
 end
 
-% Create formatted txt file for recording extracted features (named according to output mic #)
-for num = 1:numFile
-    fileNameFormat = fullfile(mainDir,featuresDir,sprintf('/features%d_format.txt', num-1));
-    
-    % Create new file if does not exist
-    if ~isfile(fileNameFormat)
-        fileIDFormat = fopen(fileNameFormat, 'w');
-
-        % Print title row at top of file
-        fprintf(fileIDFormat, 'Mean, Median, Std, Max, Skewness, Kurtosis, MFCC, LABEL\n\n');
-        fclose(fileIDFormat);
-    end
+% If feature file exists for given trial, exit the function (sufficient to only check for mic #0)
+fileNameCheck = fullfile(mainDir,featuresDir,sprintf('/features%d_%s.csv', 0, dataFolder));
+if isfile(fileNameCheck)
+    return;
 end
+
+% Compute the number of trials in given data folder (count subfolders in trial directory)
+dataDir = dir(TrialFolder);
+numTrials = sum([dataDir.isdir]) - 2;
 
 % For each trial, load the .wav files for feature extraction
 for t = 1:numTrials
@@ -36,12 +31,8 @@ for t = 1:numTrials
     
     % Loop through each audio file (9)
     for i = 1:numFile
-        % Open formatted txt file for recording extracted features (named according to output mic #)
-        fileNameFormat = fullfile(mainDir,featuresDir,sprintf('/features%d_format.txt', i-1));
-        fileIDFormat = fopen(fileNameFormat, 'a');
-        fprintf(fileIDFormat, 'Trial #%d\n', t);
-        % Unformatted version (.csv)
-        fileName = fullfile(mainDir,featuresDir,sprintf('/features%d.csv', i-1));
+        % Open csv file for recording extracted features (named according to output mic # and trial name)
+        fileName = fullfile(mainDir,featuresDir,sprintf('/features%d_%s.csv', i-1, dataFolder));
         fileID = fopen(fileName, 'a');
 
         % Create path to audio file for output(i-1).wav
@@ -76,7 +67,6 @@ for t = 1:numTrials
             % Exract features and write to text file
             features = [mean(currData),median(currData),std(currData),max(currData),skewness(currData),kurtosis(currData)];
             for feature = features
-                fprintf(fileIDFormat, '%f,', feature);
                 fprintf(fileID, '%f,', feature);
             end
             
@@ -87,14 +77,11 @@ for t = 1:numTrials
             coeffs = mfcc(currData, rate, windowLength, overlapLength);
             for c_row = 1:size(coeffs,1)
                 for c_col = 1:size(coeffs,2)
-                    fprintf(fileIDFormat, '%f,', coeffs(c_row,c_col));
                     fprintf(fileID, '%f,', coeffs(c_row,c_col));
                 end
             end
             
             % Write label value
-            fprintf(fileIDFormat, '%d', label);
-            fprintf(fileIDFormat, '\n');
             fprintf(fileID, '%d', label);
             fprintf(fileID, '\n');
             
@@ -103,8 +90,6 @@ for t = 1:numTrials
         end
         
         % End recording of extracted feature for given output file
-        fprintf(fileIDFormat, '\n');
-        fclose(fileIDFormat);
         fclose(fileID);
     end
 end

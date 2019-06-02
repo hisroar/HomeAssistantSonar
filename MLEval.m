@@ -5,11 +5,11 @@ close all;
 fclose all;
 
 % Define variables
-numFile = 9; % To be updated!! (9) *****
+numFile = 9;
 mainDir = pwd;
 featuresDir = '/ExtractedFeatures';
 
-% For each feature file (9), perform machine learning algorithm
+% For each feature file (9), perform machine learning algorithm and report accuracy
 accuracyFile = fullfile(mainDir,'/ML_Accuracy.txt');
 afileID = fopen(accuracyFile, 'w');
 fprintf(afileID, 'Report of Cross-Validation Accuracy for ML Classifiers\n\n');
@@ -20,13 +20,20 @@ features_all = [];
 labels_all = [];
 
 for num = 1:numFile      
-    % Load data from feature files (.csv)
-    featureFile = sprintf('features%d.csv', num-1);
-    featureData = load(featureFile);
+    % Define/reset feature and label matrices
+    features = [];
+    labels = [];
     
-    % Form feature and label matrices
-    features = featureData(:,1:size(featureData,2)-1);
-    labels = featureData(:,size(featureData,2));
+    % Loop through all files with name 'features%d_' (where %d is the output mic #)
+    files = dir(sprintf('features%d_*.csv', num-1));
+    for featureFile = files'
+        % Load data from feature files
+        featureData = load(featureFile.name);
+
+        % Vertically concatenate to form feature/label matrices
+        features = vertcat(features, featureData(:,1:size(featureData,2)-1));
+        labels = vertcat(labels, featureData(:,size(featureData,2)));
+    end
     
     % Generate a matrix with all features and all labels (labels should all be the same)
     features_all = [features_all, features];
