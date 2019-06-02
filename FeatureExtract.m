@@ -1,4 +1,4 @@
-% Function that extracts features for given data and saves to corresponding features file
+% [Funct] Function that extracts features for given data and saves to corresponding features file
 
 % void FeatureExtract(str dataFolder, int label)
 function FeatureExtract(dataFolder, featuresDir, label)
@@ -26,15 +26,12 @@ dataDir = dir(TrialFolder);
 numTrials = sum([dataDir.isdir]) - 2;
 
 % For each trial, load the .wav files for feature extraction
+invalidDetected = false;
 for t = 1:numTrials
     trial_dir = fullfile(mainDir,dataFolder,num2str(t));
     
-    % Loop through each audio file (9)
+    % Check for any invalid audio files (TotalSamples = 0 or < 65500)
     for i = 1:numFile
-        % Open csv file for recording extracted features (named according to output mic # and trial name)
-        fileName = fullfile(mainDir,featuresDir,sprintf('/features%d_%s.csv', i-1, dataFolder));
-        fileID = fopen(fileName, 'a');
-
         % Create path to audio file for output(i-1).wav
         outputNum = sprintf('output%d.wav', i-1);
         audioFile = fullfile(trial_dir, outputNum);
@@ -42,8 +39,25 @@ for t = 1:numTrials
         % Check that audio file is valid (TotalSamples != 0 and > 65500)
         info = audioinfo(audioFile);
         if info.TotalSamples == 0 || info.TotalSamples < 65500
-            break; % Exit for loop -> go to next audio file number
+            invalidDetected = true; % Set toggle - go to next trial
         end
+    end
+    
+    % Loop through each audio file (9)
+    for i = 1:numFile
+        % Go to next trial if any invalid audio files detected
+        if invalidDetected == true
+            invalidDetected = false;
+            break;
+        end
+        
+        % Open csv file for recording extracted features (named according to output mic # and trial name)
+        fileName = fullfile(mainDir,featuresDir,sprintf('/features%d_%s.csv', i-1, dataFolder));
+        fileID = fopen(fileName, 'a');
+
+        % Create path to audio file for output(i-1).wav
+        outputNum = sprintf('output%d.wav', i-1);
+        audioFile = fullfile(trial_dir, outputNum);
         
         % Read audio file -> output is data, sampling rate
         [data,rate] = audioread(audioFile);

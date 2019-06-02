@@ -1,4 +1,4 @@
-% Setup or clean up ExtractedFeatures folders (only need to do once)
+% [1] Setup or clean up ExtractedFeatures folders (only need to do once)
 
 clear all;
 close all;
