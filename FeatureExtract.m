@@ -107,3 +107,4 @@ for t = 1:numTrials
         fclose(fileID);
     end
 end
+end

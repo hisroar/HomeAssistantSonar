@@ -38,10 +38,14 @@ end
 % Append labels as last column to features_all matrix (labels should all be the same)
 features_all = [features_all, labels];
 
+% Perform feature selection on feature_all to get pruned feature matrix -> pick numSelect top features
+cd(mainDir)
+numSelect = 50;
+features_pruned = FeatureSelect(features_all, numSelect);
+
 % Save feature/label matrix to csv file
 allFeatureFile = fullfile(mainDir,featuresDir,'/features_all.csv');
 if isfile(allFeatureFile)
     delete(allFeatureFile); % If file already exists, delete and make new one
 end
-csvwrite(allFeatureFile, features_all);
-cd(mainDir)
+csvwrite(allFeatureFile, features_pruned);
