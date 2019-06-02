@@ -13,9 +13,14 @@ featuresDir = '/ExtractedFeatures';
 accuracyFile = fullfile(mainDir,'/ML_Accuracy.txt');
 afileID = fopen(accuracyFile, 'w');
 fprintf(afileID, 'Report of Cross-Validation Accuracy for ML Classifiers\n\n');
-   
-% Load data from feature_all file
+
+% Check if feature_all file exists, return error and exit if not
 allFeatureFile = fullfile(mainDir,featuresDir,'/features_all.csv');
+if ~isfile(allFeatureFile)
+    fprintf('Error: The feature_all.csv file does not exist.\n');
+    return; % Exit the script
+end
+% Load data from feature_all file
 allFeatureData = load(allFeatureFile);
 
 % Form feature/label matrices for ML evaluation
@@ -23,10 +28,19 @@ features = allFeatureData(:,1:size(allFeatureData,2)-1);
 labels = allFeatureData(:,size(allFeatureData,2));
 
 % Define classifier and accuracy matrix -> ML models to be used
+% classifier = ["Multi-Class SVM"];
+% accuracy = zeros(size(classifier));
+% 
+% % Train and cross validate machine learning models -> estimate error and accuracy
+% % Multi-Class SVM (ECOC)
+% mcSvmMdl = fitcsvm(features, labels);
+% mcSvmCvMdl = crossval(mcSvmMdl);
+% mcSvmError = kfoldLoss(mcSvmCvMdl);
+% accuracy(1,1) = 1 - mcSvmError;
+
+% Binary classifiers (2 classes)
 classifier = ["SVM", "KNN"];
 accuracy = zeros(size(classifier));
-
-% Train and cross validate machine learning models -> estimate error and accuracy
 % SVM
 svmMdl = fitcsvm(features, labels);
 svmCvMdl = crossval(svmMdl);
