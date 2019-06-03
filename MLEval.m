@@ -91,17 +91,17 @@ accuracy(1,5) = 1 - rusBoostError;
 % classifier = ["SVM", "Random Forest", "KNN"];
 % accuracy = zeros(size(classifier));
 % % SVM
-% svmMdl = fitcsvm(features, labels);
+% svmMdl = fitcsvm(features, labels_binary);
 % svmCvMdl = crossval(svmMdl);
 % svmError = kfoldLoss(svmCvMdl);
 % accuracy(1,1) = 1 - svmError; 
 % % Random Forest (Bagging)
-% bagMdl = fitcensemble(features, labels, 'Method', 'Bag');
+% bagMdl = fitcensemble(features, labels_binary, 'Method', 'Bag');
 % bagCvMdl = crossval(bagMdl);
 % bagError = kfoldLoss(bagCvMdl);
 % accuracy(1,2) = 1 - bagError;
 % % KNN
-% knnMdl = fitcknn(features, labels);
+% knnMdl = fitcknn(features, labels_binary);
 % knnCvMdl = crossval(knnMdl);
 % knnError = kfoldLoss(knnCvMdl);
 % accuracy(1,3) = 1 - knnError;
