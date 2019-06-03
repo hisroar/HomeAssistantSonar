@@ -95,13 +95,13 @@ for t = 1:numTrials
                 end
             end
             
-            % Write label value
-            fprintf(fileID, '%d', label);
-            fprintf(fileID, '\n');
-            
             % Increment data index
             index = index + stepSize;
         end
+        
+        % Write label value (features for all windows = 1 row per trial)
+        fprintf(fileID, '%d', label);
+        fprintf(fileID, '\n');
         
         % End recording of extracted feature for given output file
         fclose(fileID);

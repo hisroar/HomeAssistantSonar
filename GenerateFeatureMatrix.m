@@ -90,4 +90,7 @@ end
 
 % Save workspace variables to mat file
 matFile = 'GenerateFeatureMatrix.mat';
+if isfile(matFile)
+    delete(matFile); % If file already exists, delete and make new one
+end
 save(matFile);
