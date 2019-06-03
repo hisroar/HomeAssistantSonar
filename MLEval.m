@@ -27,16 +27,65 @@ allFeatureData = load(allFeatureFile);
 features = allFeatureData(:,1:size(allFeatureData,2)-1);
 labels = allFeatureData(:,size(allFeatureData,2));
 
+% Unpruned feature matrix (labels should be the same)
+unPrunedFile = fullfile(mainDir,featuresDir,'/features_unpruned.csv');
+unPrunedData = load(unPrunedFile);
+features_unpruned = unPrunedData(:,1:size(unPrunedData,2)-1);
+
+% Binary labels matrix
+labels_binary = zeros(size(labels,1),1);
+for i = 1:size(labels,1)
+    if labels(i) >= 1
+        labels_binary(i) = 1;
+    end
+end
+
 % Define classifier and accuracy matrix -> ML models to be used
-classifier = ["Multi-Class SVM"];
+classifier = ["Multi-Class SVM", "AdaboostM2", "Random Forest", "Subspace", "RUSBoost", "LPBoost", "TotalBoost"];
 accuracy = zeros(size(classifier));
 
 % Train and cross validate machine learning models -> estimate error and accuracy
-% Multi-Class SVM (ECOC)
+% Multi-Class SVM (ECOC) [top 3]
 mcSvmMdl = fitcecoc(features, labels);
 mcSvmCvMdl = crossval(mcSvmMdl);
 mcSvmError = kfoldLoss(mcSvmCvMdl);
 accuracy(1,1) = 1 - mcSvmError;
+
+% AdaboostM2 (Boosting - default) [top 2]
+boostMdl = fitcensemble(features, labels);
+boostCvMdl = crossval(boostMdl);
+boostError = kfoldLoss(boostCvMdl);
+accuracy(1,2) = 1 - boostError;
+
+% Random Forest (Bagging) [top 1]
+bagMdl = fitcensemble(features, labels, 'Method', 'Bag');
+bagCvMdl = crossval(bagMdl);
+bagError = kfoldLoss(bagCvMdl);
+accuracy(1,3) = 1 - bagError;
+
+% Subspace
+subspaceMdl = fitcensemble(features, labels, 'Method', 'Subspace');
+subspaceCvMdl = crossval(subspaceMdl);
+subspaceError = kfoldLoss(subspaceCvMdl);
+accuracy(1,4) = 1 - subspaceError;
+
+% RUSBoost
+rusBoostMdl = fitcensemble(features, labels, 'Method', 'RUSBoost');
+rusBoostCvMdl = crossval(rusBoostMdl);
+rusBoostError = kfoldLoss(rusBoostCvMdl);
+accuracy(1,5) = 1 - rusBoostError;
+
+% LPBoost (w/ optimization toolkit)
+% lpBoostMdl = fitcensemble(features, labels, 'Method', 'LPBoost');
+% lpBoostCvMdl = crossval(lpBoostMdl);
+% lpBoostError = kfoldLoss(lpBoostCvMdl);
+% accuracy(1,6) = 1 - lpBoostError;
+% 
+% % TotalBoost (w/ optimization toolkit)
+% totalBoostMdl = fitcensemble(features, labels, 'Method', 'TotalBoost');
+% totalBoostCvMdl = crossval(totalBoostMdl);
+% totalBoostError = kfoldLoss(totalBoostCvMdl);
+% accuracy(1,7) = 1 - totalBoostError;
 
 % Binary classifiers (2 classes)
 % classifier = ["SVM", "KNN"];
