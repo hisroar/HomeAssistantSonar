@@ -76,35 +76,45 @@ rusBoostError = kfoldLoss(rusBoostCvMdl);
 accuracy(1,5) = 1 - rusBoostError;
 
 % LPBoost (w/ optimization toolkit)
-% lpBoostMdl = fitcensemble(features, labels, 'Method', 'LPBoost');
-% lpBoostCvMdl = crossval(lpBoostMdl);
-% lpBoostError = kfoldLoss(lpBoostCvMdl);
-% accuracy(1,6) = 1 - lpBoostError;
-% 
-% % TotalBoost (w/ optimization toolkit)
-% totalBoostMdl = fitcensemble(features, labels, 'Method', 'TotalBoost');
-% totalBoostCvMdl = crossval(totalBoostMdl);
-% totalBoostError = kfoldLoss(totalBoostCvMdl);
-% accuracy(1,7) = 1 - totalBoostError;
+lpBoostMdl = fitcensemble(features, labels, 'Method', 'LPBoost');
+lpBoostCvMdl = crossval(lpBoostMdl);
+lpBoostError = kfoldLoss(lpBoostCvMdl);
+accuracy(1,6) = 1 - lpBoostError;
+
+% TotalBoost (w/ optimization toolkit)
+totalBoostMdl = fitcensemble(features, labels, 'Method', 'TotalBoost');
+totalBoostCvMdl = crossval(totalBoostMdl);
+totalBoostError = kfoldLoss(totalBoostCvMdl);
+accuracy(1,7) = 1 - totalBoostError;
 
 % Binary classifiers (2 classes)
-% classifier = ["SVM", "Random Forest", "KNN"];
+% classifier = ["SVM: Gaussian", "SVM: Linear", "SVM: Polynomial", "Random Forest", "KNN"];
 % accuracy = zeros(size(classifier));
-% % SVM
-% svmMdl = fitcsvm(features, labels_binary);
+% % SVM (Kernel: Gaussian)
+% svmMdl = fitcsvm(features, labels_binary, 'KernelFunction', 'gaussian');
 % svmCvMdl = crossval(svmMdl);
 % svmError = kfoldLoss(svmCvMdl);
-% accuracy(1,1) = 1 - svmError; 
+% accuracy(1,1) = 1 - svmError;
+% % SVM (Kernel: Linear)
+% svmMdl = fitcsvm(features, labels_binary, 'KernelFunction', 'linear');
+% svmCvMdl = crossval(svmMdl);
+% svmError = kfoldLoss(svmCvMdl);
+% accuracy(1,2) = 1 - svmError;
+% % SVM (Kernel: Polynomial)
+% svmMdl = fitcsvm(features, labels_binary, 'KernelFunction', 'polynomial');
+% svmCvMdl = crossval(svmMdl);
+% svmError = kfoldLoss(svmCvMdl);
+% accuracy(1,3) = 1 - svmError;
 % % Random Forest (Bagging)
 % bagMdl = fitcensemble(features, labels_binary, 'Method', 'Bag');
 % bagCvMdl = crossval(bagMdl);
 % bagError = kfoldLoss(bagCvMdl);
-% accuracy(1,2) = 1 - bagError;
+% accuracy(1,4) = 1 - bagError;
 % % KNN
 % knnMdl = fitcknn(features, labels_binary);
 % knnCvMdl = crossval(knnMdl);
 % knnError = kfoldLoss(knnCvMdl);
-% accuracy(1,3) = 1 - knnError;
+% accuracy(1,5) = 1 - knnError;
 
 % Print the accuracy to text file
 for c = 1:size(classifier,2)

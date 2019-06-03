@@ -72,7 +72,7 @@ if changedData == true
     
     % Perform feature selection on feature_all to get pruned feature matrix -> pick numSelect top features
     cd(mainDir)
-    numSelect = 50;
+    numSelect = 125; % Selected to optimize accuracy
     features_pruned = FeatureSelect(features_all, numSelect);
 
     % Save feature/label matrix to csv file
