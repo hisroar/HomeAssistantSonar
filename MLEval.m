@@ -45,13 +45,13 @@ classifier = ["Multi-Class SVM", "AdaboostM2", "Random Forest", "Subspace", "RUS
 accuracy = zeros(size(classifier));
 
 % Train and cross validate machine learning models -> estimate error and accuracy
-% Multi-Class SVM (ECOC) [top 3]
+% Multi-Class SVM (ECOC) [top 2]
 mcSvmMdl = fitcecoc(features, labels);
 mcSvmCvMdl = crossval(mcSvmMdl);
 mcSvmError = kfoldLoss(mcSvmCvMdl);
 accuracy(1,1) = 1 - mcSvmError;
 
-% AdaboostM2 (Boosting - default) [top 2]
+% AdaboostM2 (Boosting - default) [top 3]
 boostMdl = fitcensemble(features, labels);
 boostCvMdl = crossval(boostMdl);
 boostError = kfoldLoss(boostCvMdl);
@@ -88,18 +88,23 @@ accuracy(1,5) = 1 - rusBoostError;
 % accuracy(1,7) = 1 - totalBoostError;
 
 % Binary classifiers (2 classes)
-% classifier = ["SVM", "KNN"];
+% classifier = ["SVM", "Random Forest", "KNN"];
 % accuracy = zeros(size(classifier));
 % % SVM
-% svmMdl = fitcsvm(features, labels);
+% svmMdl = fitcsvm(features_unpruned, labels_binary);
 % svmCvMdl = crossval(svmMdl);
 % svmError = kfoldLoss(svmCvMdl);
 % accuracy(1,1) = 1 - svmError; 
+% % Random Forest (Bagging)
+% bagMdl = fitcensemble(features_unpruned, labels_binary, 'Method', 'Bag');
+% bagCvMdl = crossval(bagMdl);
+% bagError = kfoldLoss(bagCvMdl);
+% accuracy(1,2) = 1 - bagError;
 % % KNN
 % knnMdl = fitcknn(features, labels);
 % knnCvMdl = crossval(knnMdl);
 % knnError = kfoldLoss(knnCvMdl);
-% accuracy(1,2) = 1 - knnError;
+% accuracy(1,3) = 1 - knnError;
 
 % Print the accuracy to text file
 for c = 1:size(classifier,2)
