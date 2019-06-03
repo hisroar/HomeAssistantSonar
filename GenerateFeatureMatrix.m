@@ -31,7 +31,7 @@ if isfile(unpruneFile)
         featureDataRows = featureDataRows + size(featureData,1);
     end
     
-    % If now new data, update toggle
+    % If no new data, update toggle
     if unpruneDataRows == featureDataRows
         changedData = false;
     end
