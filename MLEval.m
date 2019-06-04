@@ -40,11 +40,11 @@ for i = 1:size(labels,1)
     end
 end
 
-% Define classifier and accuracy matrix -> ML models to be used
+% Train and cross validate machine learning models -> estimate error and accuracy
+% [Multi] Define Multi-Class classifiers and accuracy matrix -> ML models to be used
 classifier = ["Multi-Class SVM", "AdaboostM2", "Random Forest", "Subspace", "RUSBoost", "LPBoost", "TotalBoost"];
 accuracy = zeros(size(classifier));
 
-% Train and cross validate machine learning models -> estimate error and accuracy
 % Multi-Class SVM (ECOC) [top 2]
 mcSvmMdl = fitcecoc(features, labels);
 mcSvmCvMdl = crossval(mcSvmMdl);
@@ -87,38 +87,51 @@ totalBoostCvMdl = crossval(totalBoostMdl);
 totalBoostError = kfoldLoss(totalBoostCvMdl);
 accuracy(1,7) = 1 - totalBoostError;
 
-% Binary classifiers (2 classes)
-% classifier = ["SVM: Gaussian", "SVM: Linear", "SVM: Polynomial", "Random Forest", "KNN"];
-% accuracy = zeros(size(classifier));
-% % SVM (Kernel: Gaussian)
-% svmMdl = fitcsvm(features, labels_binary, 'KernelFunction', 'gaussian');
-% svmCvMdl = crossval(svmMdl);
-% svmError = kfoldLoss(svmCvMdl);
-% accuracy(1,1) = 1 - svmError;
-% % SVM (Kernel: Linear)
-% svmMdl = fitcsvm(features, labels_binary, 'KernelFunction', 'linear');
-% svmCvMdl = crossval(svmMdl);
-% svmError = kfoldLoss(svmCvMdl);
-% accuracy(1,2) = 1 - svmError;
-% % SVM (Kernel: Polynomial)
-% svmMdl = fitcsvm(features, labels_binary, 'KernelFunction', 'polynomial');
-% svmCvMdl = crossval(svmMdl);
-% svmError = kfoldLoss(svmCvMdl);
-% accuracy(1,3) = 1 - svmError;
-% % Random Forest (Bagging)
-% bagMdl = fitcensemble(features, labels_binary, 'Method', 'Bag');
-% bagCvMdl = crossval(bagMdl);
-% bagError = kfoldLoss(bagCvMdl);
-% accuracy(1,4) = 1 - bagError;
-% % KNN
-% knnMdl = fitcknn(features, labels_binary);
-% knnCvMdl = crossval(knnMdl);
-% knnError = kfoldLoss(knnCvMdl);
-% accuracy(1,5) = 1 - knnError;
+% [Binary] Define Binary classifiers and accuracy matrix (2 classes)
+classifier_binary = ["SVM: Gaussian", "SVM: Linear", "SVM: Polynomial", "Random Forest", "KNN"];
+accuracy_binary = zeros(size(classifier_binary));
 
-% Print the accuracy to text file
+% SVM (Kernel: Gaussian)
+svmMdl = fitcsvm(features, labels_binary, 'KernelFunction', 'gaussian');
+svmCvMdl = crossval(svmMdl);
+svmError = kfoldLoss(svmCvMdl);
+accuracy_binary(1,1) = 1 - svmError;
+
+% SVM (Kernel: Linear)
+svmMdl = fitcsvm(features, labels_binary, 'KernelFunction', 'linear');
+svmCvMdl = crossval(svmMdl);
+svmError = kfoldLoss(svmCvMdl);
+accuracy_binary(1,2) = 1 - svmError;
+
+% SVM (Kernel: Polynomial)
+svmMdl = fitcsvm(features, labels_binary, 'KernelFunction', 'polynomial');
+svmCvMdl = crossval(svmMdl);
+svmError = kfoldLoss(svmCvMdl);
+accuracy_binary(1,3) = 1 - svmError;
+
+% Random Forest (Bagging)
+bagMdl = fitcensemble(features, labels_binary, 'Method', 'Bag');
+bagCvMdl = crossval(bagMdl);
+bagError = kfoldLoss(bagCvMdl);
+accuracy_binary(1,4) = 1 - bagError;
+
+% KNN
+knnMdl = fitcknn(features, labels_binary);
+knnCvMdl = crossval(knnMdl);
+knnError = kfoldLoss(knnCvMdl);
+accuracy_binary(1,5) = 1 - knnError;
+
+
+% Print the multi-class accuracies to text file
+fprintf(afileID, 'Multi-Class Classifiers:\n');
 for c = 1:size(classifier,2)
     fprintf(afileID, '%s CV Accuracy = %f\n', classifier(1,c), accuracy(1,c));
+end
+
+% Print the binary accuracies to text file
+fprintf(afileID, '\nBinary Classifiers:\n');
+for c = 1:size(classifier_binary,2)
+    fprintf(afileID, '%s CV Accuracy = %f\n', classifier_binary(1,c), accuracy_binary(1,c));
 end
 
 fclose(afileID);
