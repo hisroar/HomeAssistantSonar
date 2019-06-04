@@ -85,8 +85,8 @@ for t = 1:numTrials
             end
             
             % Computation for MFCC feature -> extract and write to text file
-            const = 5;
-            windowLength = ceil(size(currData,1)/const);
+            mfccWindows = 5;
+            windowLength = ceil(size(currData,1)/mfccWindows);
             overlapLength = rate*0.02; % default
             coeffs = mfcc(currData, rate, windowLength, overlapLength);
             for c_row = 1:size(coeffs,1)
