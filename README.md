@@ -2,7 +2,7 @@
 
 The report can be found [here][DocLink].
 
-This project was done by Seraphine Goh and Dennis Shim in Spring 2019 for EE209AS: Security and Privacy for Cyber-Physical Systems, and Internet-of-Things at UCLA. 
+This project was done by Seraphine Goh and Dennis Shim in Spring 2019 for EE209AS: Security and Privacy for Embedded Systems, Cyber-Physical Systems, and Internet-of-Things at UCLA. 
 
 ## Data
 
@@ -68,5 +68,5 @@ MIT
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
-   [DocLink]: <https://docs.google.com/document/d/1ql-SRxD6op0Ms6GhebDBstio8vFzg7y52C76V5Cwb6s/edit?usp=sharing>
+   [DocLink]: <https://docs.google.com/document/d/18EJBgxW4DyBixsUtu-k_Z5QVkMPGzP9QLF6vrHZCwx8/edit?usp=sharing>
    [DataLink]: <https://drive.google.com/open?id=13PZlo9e6vIQKrinCk0Tvx3Ue88nbVBSW>
