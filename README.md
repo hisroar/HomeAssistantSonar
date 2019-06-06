@@ -12,11 +12,11 @@ Below is a table describing the data.
 
 | Data Directory  | Frequency of sound | Description |
 | ---------------- | ----------- | - |
-| `trials_no_subject_1` | 1kHz | No subject present, 50 trials in 1 furniture configuration |
-| `trials_no_subject_2` | 1kHz | No subject present, 100 trials in 4 furniture configurations |
-| `trials_no_subject_3` | 1kHz | No subject present, 105 trials in 47 furniture configurations |
-| `trials_no_subject_4` | 1kHz | No subject present, 100 trials in 1 furniture configuration |
-| `trials_no_subject_5` | 1kHz | No subject present, 100 trials in 1 furniture configuration |
+| `trials_no_subject_1` | 1 kHz | No subject present, 50 trials in 1 furniture configuration |
+| `trials_no_subject_2` | 1 kHz | No subject present, 100 trials in 4 furniture configurations |
+| `trials_no_subject_3` | 1 kHz | No subject present, 105 trials in 47 furniture configurations |
+| `trials_no_subject_4` | 1 kHz | No subject present, 100 trials in 1 furniture configuration |
+| `trials_no_subject_5` | 1 kHz | No subject present, 100 trials in 1 furniture configuration |
 | `trials_front_1` | 1 kHz | Subject in front, 100 trials sitting and standing in 1 furniture configuration |
 | `trials_front_2` | 1 kHz | Subject in front, 100 trials sitting in multiple configurations in 1 furniture configuration |
 | `trials_front_3` | 1 kHz | Subject in front, 200 trials in front, sitting on couch (1-60) and standing (61-200) (moving around as well). 4 different furniture configurations |
