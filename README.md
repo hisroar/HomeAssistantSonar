@@ -2,6 +2,8 @@
 
 The report can be found [here][DocLink].
 
+The presentation slides can be found [here][SlidesLink].
+
 This project was done by Seraphine Goh and Dennis Shim in Spring 2019 for EE209AS: Security and Privacy for Embedded Systems, Cyber-Physical Systems, and Internet-of-Things at UCLA. 
 
 ## Data
@@ -70,3 +72,4 @@ MIT
 
    [DocLink]: <https://docs.google.com/document/d/18EJBgxW4DyBixsUtu-k_Z5QVkMPGzP9QLF6vrHZCwx8/edit?usp=sharing>
    [DataLink]: <https://drive.google.com/open?id=13PZlo9e6vIQKrinCk0Tvx3Ue88nbVBSW>
+   [SlidesLink]: <https://docs.google.com/presentation/d/1NhrBwz59hc9mox8_I1hQ0CBq-9pkc6dDw1OgZNCpyxo/edit?usp=sharing>
